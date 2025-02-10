@@ -1,0 +1,156 @@
+<!-- Navigation Bar with Logout Button -->
+<nav class="navbar navbar-light bg-light justify-content-between">
+  <span class="navbar-brand mb-0 h1">Customer Management</span>
+  <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
+</nav>
+
+<h2 class="text-center mb-4">Customer Management</h2>
+
+<!-- Show the message -->
+<div *ngIf="message" [ngClass]="{'alert': true, 'alert-success': !isError, 'alert-danger': isError, 'fade': true, 'show': true}" class="alert-dismissible fade show">
+  {{ message }}
+</div>
+
+<!-- Form -->
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <form (ngSubmit)="saveCustomer()" #customerForm="ngForm" novalidate>
+        <!-- Name Field -->
+        <div class="form-group mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input
+            type="text"
+            id="name"
+            [(ngModel)]="customer.name"
+            name="name"
+            class="form-control"
+            placeholder="Enter name"
+            required
+            #name="ngModel"
+          />
+          <!-- Validation message for name -->
+          <div *ngIf="name.invalid && name.touched" class="text-danger">
+            Name is required.
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="customer.email"
+            name="email"
+            class="form-control"
+            placeholder="Enter email"
+            required
+            email
+            #email="ngModel"
+          />
+          <!-- Validation messages for email -->
+          <div *ngIf="email.invalid && email.touched" class="text-danger">
+            <div *ngIf="email.errors?.['required']">Email is required.</div>
+            <div *ngIf="email.errors?.['email']">
+              Enter a valid email address.
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-primary w-50"
+          [disabled]="customerForm.invalid"
+        >
+          {{ isEditing ? 'Update' : 'Add' }}
+        </button>
+        <!-- Reset Button -->
+        <button
+          type="button"
+          class="btn btn-secondary w-50" 
+          (click)="resetForm()"
+        >
+        Reset
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Customer List Table -->
+<table class="table table-striped mt-4">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col" class="text-end">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let cust of customers; let i = index">
+      <td>{{ cust.id }}</td>
+      <td>{{ cust.name }}</td>
+      <td>{{ cust.email }}</td>
+      <td class="text-end">
+        <button
+          class="btn btn-sm btn-warning me-2"
+          (click)="editCustomer(cust)"
+        >
+          Edit
+        </button>
+
+        <button
+          class="btn btn-sm btn-danger"
+          (click)="openDeleteModal(cust.id)"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteConfirmationModal"
+        >
+        Delete
+        </button>                
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-between align-items-center mt-4">
+  
+  <ul class="pagination mb-0">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
+    </li>
+    <li
+      class="page-item"
+      *ngFor="let page of getPages()"
+      [class.active]="page === currentPage"
+    >
+      <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+    </li>
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
+    </li>
+  </ul>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this customer?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

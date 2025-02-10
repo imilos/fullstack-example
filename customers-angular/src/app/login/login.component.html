@@ -1,0 +1,59 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <h2 class="text-center">Login</h2>
+  
+        <!-- Show error message if login fails -->
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+  
+        <!-- Login Form -->
+        <form (ngSubmit)="onLogin()" #loginForm="ngForm" novalidate>
+          <!-- Email Field -->
+          <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              [(ngModel)]="email"
+              name="email"
+              required
+              #emailModel="ngModel"
+            />
+            <div *ngIf="emailModel.invalid && emailModel.touched" class="text-danger">
+              Email is required.
+            </div>
+          </div>
+  
+          <!-- Password Field -->
+          <div class="form-group mb-3">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              [(ngModel)]="password"
+              name="password"
+              required
+              #passwordModel="ngModel"
+            />
+            <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger">
+              Password is required.
+            </div>
+          </div>
+  
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="loginForm.invalid"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
